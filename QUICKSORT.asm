@@ -1,0 +1,101 @@
+myss SEGMENT PARA STACK 'MYSS'
+	DW 180 DUP(?)
+myss ENDS
+
+myds SEGMENT PARA 'MYDS'
+DIZI DW 56, 197, 130, 41, 51, 0, 48
+dw 193, 27, 149, 144, 223, 167, 169
+dw 246, 134, 45, 156, 252, 4, 224, 16
+dw  206, 209, 255, 167, 164, 20, 109, 85
+dw  154, 64, 248, 66, 205, 33, 190, 49, 163
+dw  53, 125, 129, 73, 227, 59, 20, 250, 234
+dw  80, 28, 66, 236, 228, 90, 36, 141
+dw 105, 170, 231, 74, 103, 208, 203, 89
+LEN DW 126
+myds ENDS
+
+
+mycs SEGMENT PARA 'MYCS'
+	ASSUME CS:mycs, DS:myds, SS:myss
+
+QS PROC FAR
+			; AX START, BX END
+			PUSH AX
+			PUSH BX
+			;LEA SI,DIZI
+			MOV SI,AX ; J
+			MOV DI,BX ; LAST ELEMENT 
+			
+			XCHG AX,BX
+			SUB AX,BX
+			MOV CL,2
+			DIV CL
+			MOV CX,AX ; # OF LOOPS
+
+			MOV BX,SI ; I
+
+	LS:		MOV AX,[DI]
+			CMP AX,[SI]
+			JNA LELSE
+				MOV AX,[SI]
+				XCHG AX,[BX]
+				MOV [SI],AX
+				ADD BX,2
+	LELSE:	ADD SI,2
+			LOOP LS
+			MOV AX,[DI]
+			XCHG AX,[BX] ;BX is the pivot
+			MOV [DI],AX 
+			MOV DX,BX ; RETURN DX
+			POP BX
+			POP AX
+			RETF
+QS ENDP
+
+SORT PROC FAR
+			; AX START, BX END
+			PUSH DX
+			PUSH AX
+			PUSH BX
+			
+			PUSH BX
+			SUB BX,AX ; LOOK AGAIN
+			CMP BX,2
+			POP BX
+
+			JL LEND
+				CALL QS
+				;FIRST CALL
+				PUSH BX
+				MOV BX,DX
+				SUB BX,2
+				CALL SORT
+				;SECOND CALL
+				POP BX
+				MOV AX,DX
+				ADD AX,2
+				CALL SORT		
+	LEND:	
+			POP BX
+			POP AX
+			POP DX
+		RETF
+SORT ENDP
+
+MAIN PROC FAR
+			PUSH DS
+			XOR AX,AX
+			PUSH AX
+			MOV AX,myds
+			MOV DS,AX
+			
+			;CODE STARTS
+			LEA AX,DIZI
+			MOV BX,LEN
+			CALL SORT
+			RETF
+MAIN ENDP
+
+mycs ENDS
+
+END MAIN
