@@ -41,7 +41,8 @@ QS PROC FAR
 				XCHG AX,[BX]
 				MOV [SI],AX
 				ADD BX,2
-	LELSE:	ADD SI,2
+	LELSE:	
+			ADD SI,2
 			LOOP LS
 			MOV AX,[DI]
 			XCHG AX,[BX] ;BX is the pivot
@@ -59,7 +60,7 @@ SORT PROC FAR
 			PUSH BX
 			
 			PUSH BX
-			SUB BX,AX ; LOOK AGAIN
+			SUB BX,AX
 			CMP BX,2
 			POP BX
 
