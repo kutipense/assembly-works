@@ -28,8 +28,9 @@ QS PROC FAR
 			
 			XCHG AX,BX
 			SUB AX,BX
-			MOV CL,2
-			DIV CL
+			MOV CX,2
+			XOR DX,DX
+			DIV CX
 			MOV CX,AX ; # OF LOOPS
 
 			MOV BX,SI ; I
